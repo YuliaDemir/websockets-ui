@@ -2,11 +2,10 @@ import { WebSocketServer } from "ws";
 import { handleReg } from "./handlers/reg.js";
 import { handleCreateRoom, addToTheRoom, getRooms } from "./handlers/room.js";
 export function startWebSocketServer(server) {
-    const wss = new WebSocketServer({ port: 3000 });
+    const wss = new WebSocketServer({ server });
     wss.on('connection', (ws) => {
         ws.on('message', (message) => {
             try {
-                console.log(message.toString("utf8"));
                 const { type, data, id } = JSON.parse(message.toString("utf8"));
                 handleMessage(ws, type, data, id);
             }

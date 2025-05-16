@@ -1,7 +1,6 @@
 import { db } from '../db.js';
 import { WebSocket } from 'ws';
 import { generateId } from '../helpers/id.js';
-import { createNewGame } from './game.js';
 
 export function handleCreateRoom (ws: WebSocket) {
     if (db.connections.has(ws)) {
@@ -9,16 +8,18 @@ export function handleCreateRoom (ws: WebSocket) {
         const userName =  db.connections.get(ws) || '' ;
         
         db.rooms.set(roomId, userName);
-        ws.send(JSON.stringify(`The room was generated with number ${roomId}`));
+        getRooms(ws);
     }
 };
 
 export function addToTheRoom (ws: WebSocket, roomId: number) {
     if (db.connections.has(ws)) {
+
         const currentUserName =  db.connections.get(ws) || '' ;
         const waitingUserName = db.rooms.get(roomId) || '';
         
         db.rooms.delete(roomId);
+        getRooms(ws);
         createNewGame(currentUserName, waitingUserName);
     }
 };
@@ -36,9 +37,33 @@ export function getRooms (ws: WebSocket) {
             ],
         }
     });
-    ws.send(JSON.stringify({
-        type: "update_room",
-        data,
-        id: 0,
-    }));
+
+    const jsonData = JSON.stringify(data);
+    const connections = [...db.connections.keys()];
+
+    connections.forEach(
+        ws => ws.send(JSON.stringify({
+            type: "update_room",
+            data,
+            id: 0,
+        }))
+    );
+};
+
+export function createNewGame (user1: string, user2: string) {
+    const idGame = generateId('game');
+    const connections = [...db.connections.entries()].filter(([ws, userId]) => userId === user1 || userId === user2);
+    connections.forEach(([ws, userId]) => {
+        ws.send(JSON.stringify(
+            {
+                type: "create_game",
+                data:
+                    {
+                        idGame,  
+                        idPlayer: userId,
+                    },
+                id: 0,
+            }
+        ))
+    });
 };

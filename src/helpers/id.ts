@@ -7,6 +7,11 @@ export function generateId (type: string): number {
             const id = sortedArray.length > 0 ? sortedArray[sortedArray.length - 1][0] +  1 : 0;
             return id;
         };
+        case 'game': {
+            const sortedArray = [...db.games.entries()].sort((a, b) => a[0] - b[0]);
+            const id = sortedArray.length > 0 ? sortedArray[sortedArray.length - 1][0] +  1 : 0;
+            return id;
+        };
     };
     throw new Error;
 };

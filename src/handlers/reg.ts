@@ -9,9 +9,10 @@ export function handleReg(ws: WebSocket, data: any, id: number) {
         db.connections.set(ws, name);
         ws.send(JSON.stringify({
             type: 'reg',
-            data: JSON.stringify({ name, index: name, error: false, errorText: ''}),
+            data: { name, index: name, error: false, errorText: ''},
             id,
         }));
+        updateWinners(ws);
     }
     else {
         const player = db.players.get(name);
@@ -19,9 +20,10 @@ export function handleReg(ws: WebSocket, data: any, id: number) {
             db.connections.set(ws, name);
             ws.send(JSON.stringify({
                 type: 'reg',
-                data: JSON.stringify({ name, index: name, error: false, errorText: ''}),
+                data: { name, index: name, error: false, errorText: ''},
                 id,
             }));
+            updateWinners(ws);
         }
         else {
             ws.send(JSON.stringify({
@@ -31,4 +33,31 @@ export function handleReg(ws: WebSocket, data: any, id: number) {
             }));
         };
     };
+};
+
+export function updateWinners(ws: WebSocket) {
+    console.log('update winners')
+    // const rooms = [...db.rooms.entries()];
+    // const data = rooms.map(([ roomId, userName ]) => {
+    //     return {
+    //         roomId,
+    //         roomUsers: [
+    //             {
+    //                 name: userName,
+    //                 index: userName,
+    //             }
+    //         ],
+    //     }
+    // });
+
+    // const jsonData = JSON.stringify(data);
+    // const connections = [...db.connections.keys()];
+
+    // connections.forEach(
+    //     ws => ws.send(JSON.stringify({
+    //         type: "update_room",
+    //         data,
+    //         id: 0,
+    //     }))
+    // );
 }
