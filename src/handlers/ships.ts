@@ -46,12 +46,28 @@ export function addShips (ws: WebSocket, data: any, id: number) {
 
     const users = db.games.get(gameId) || [];
     const secondUser = users[0] === userName ? users [1] : users[0];
+    const wsSecondUser = [...db.connections.entries()]
+        .filter(([ws, userName]) => userName === secondUser)[0][0];
+
     db.myBoard.set(userName, shipsPositions);
+
     if (db.myBoard.has(secondUser!)) {
-        startGame();
+        startGame(ws, ships, userName);
+        startGame(wsSecondUser, ships, secondUser!);
     };
 };
 
-export function startGame () {
-    console.log("stsart the game");
-}
+export function startGame (ws: WebSocket, ships: any, currentPlayerIndex: string) {
+    console.log("start game");
+    ws.send(JSON.stringify(
+        {
+            type: "start_game",
+            data: {
+                ships,
+                currentPlayerIndex
+            },
+            id: 0,
+        }
+    ));
+};
+

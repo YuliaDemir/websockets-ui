@@ -6,8 +6,6 @@ export function startWebSocketServer(server) {
     const wss = new WebSocketServer({ server });
     wss.on('connection', (ws) => {
         ws.on('message', (message) => {
-            console.log(typeof message);
-            console.log(message);
             try {
                 const { type, data, id } = JSON.parse(message.toString("utf8"));
                 const handledData = data ? JSON.parse(data) : data;

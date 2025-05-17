@@ -12,11 +12,7 @@ var TypeOfShip;
 export function addShips(ws, data, id) {
     console.log("addShips");
     const userName = db.connections.get(ws) || "";
-    console.log("дошли досюда1");
-    console.log(typeof data);
-    console.log(data);
     const { gameId, ships } = data;
-    console.log("дошли досюда2");
     let shipsPositions = Array.from({ length: 10 }, () => Array(10).fill(0));
     ships.forEach(({ position: { x, y }, direction, length }) => {
         if (direction) {
@@ -35,14 +31,25 @@ export function addShips(ws, data, id) {
     });
     const users = db.games.get(gameId) || [];
     const secondUser = users[0] === userName ? users[1] : users[0];
+    const wsSecondUser = [...db.connections.entries()]
+        .filter(([ws, userName]) => userName === secondUser)[0][0];
     db.myBoard.set(userName, shipsPositions);
-    console.log("дошли досюда3");
     if (db.myBoard.has(secondUser)) {
-        startGame();
+        startGame(ws, ships, userName);
+        startGame(wsSecondUser, ships, secondUser);
     }
     ;
 }
 ;
-export function startGame() {
-    console.log("stsart the game");
+export function startGame(ws, ships, currentPlayerIndex) {
+    console.log("start game");
+    ws.send(JSON.stringify({
+        type: "start_game",
+        data: {
+            ships,
+            currentPlayerIndex
+        },
+        id: 0,
+    }));
 }
+;
