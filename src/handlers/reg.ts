@@ -23,7 +23,7 @@ export function handleReg(ws: WebSocket, data: any, id: number) {
                 data: { name, index: name, error: false, errorText: ''},
                 id,
             }));
-            updateWinners(ws);
+        updateWinners(ws);
         }
         else {
             ws.send(JSON.stringify({

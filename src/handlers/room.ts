@@ -52,6 +52,8 @@ export function getRooms (ws: WebSocket) {
 
 export function createNewGame (user1: string, user2: string) {
     const idGame = generateId('game');
+    db.games.set(idGame, [user1, user2]);
+
     const connections = [...db.connections.entries()].filter(([ws, userId]) => userId === user1 || userId === user2);
     connections.forEach(([ws, userId]) => {
         ws.send(JSON.stringify(
