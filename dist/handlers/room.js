@@ -1,6 +1,7 @@
 import { db } from '../db.js';
 import { generateId } from '../helpers/id.js';
-export function handleCreateRoom(ws) {
+export function createRoom(ws) {
+    console.log("create room");
     if (db.connections.has(ws)) {
         const roomId = generateId('room');
         const userName = db.connections.get(ws) || '';
@@ -10,15 +11,18 @@ export function handleCreateRoom(ws) {
 }
 ;
 export function addToTheRoom(ws, roomId) {
+    console.log("add to the room");
     if (db.connections.has(ws)) {
         const currentUserName = db.connections.get(ws) || '';
         const waitingUserName = db.rooms.get(roomId) || '';
         db.rooms.delete(roomId);
+        getRooms(ws);
         createNewGame(currentUserName, waitingUserName);
     }
 }
 ;
 export function getRooms(ws) {
+    console.log("update room = get rooms");
     const rooms = [...db.rooms.entries()];
     const data = rooms.map(([roomId, userName]) => {
         return {
@@ -35,25 +39,25 @@ export function getRooms(ws) {
     const connections = [...db.connections.keys()];
     connections.forEach(ws => ws.send(JSON.stringify({
         type: "update_room",
-        data,
+        data: jsonData,
         id: 0,
     })));
 }
 ;
 export function createNewGame(user1, user2) {
-    console.log('вошли в создание игры');
+    console.log("create new game");
     const idGame = generateId('game');
+    db.games.set(idGame, [user1, user2]);
     const connections = [...db.connections.entries()].filter(([ws, userId]) => userId === user1 || userId === user2);
     connections.forEach(([ws, userId]) => {
         ws.send(JSON.stringify({
             type: "create_game",
-            data: {
+            data: JSON.stringify({
                 idGame,
                 idPlayer: userId,
-            },
+            }),
             id: 0,
         }));
     });
-    console.log('---------', user1, ' ', user2, '------------------------');
 }
 ;

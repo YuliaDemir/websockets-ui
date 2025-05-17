@@ -2,17 +2,18 @@ import { db } from '../db.js';
 import { WebSocket } from 'ws';
 import { generateId } from '../helpers/id.js';
 
-export function handleCreateRoom (ws: WebSocket) {
+export function createRoom (ws: WebSocket) {
+    console.log("create room");
     if (db.connections.has(ws)) {
         const roomId = generateId('room');
         const userName =  db.connections.get(ws) || '' ;
-        
         db.rooms.set(roomId, userName);
         getRooms(ws);
     }
 };
 
 export function addToTheRoom (ws: WebSocket, roomId: number) {
+    console.log("add to the room");
     if (db.connections.has(ws)) {
 
         const currentUserName =  db.connections.get(ws) || '' ;
@@ -25,6 +26,7 @@ export function addToTheRoom (ws: WebSocket, roomId: number) {
 };
 
 export function getRooms (ws: WebSocket) {
+    console.log("update room = get rooms");
     const rooms = [...db.rooms.entries()];
     const data = rooms.map(([ roomId, userName ]) => {
         return {
@@ -44,13 +46,14 @@ export function getRooms (ws: WebSocket) {
     connections.forEach(
         ws => ws.send(JSON.stringify({
             type: "update_room",
-            data,
+            data: jsonData,
             id: 0,
         }))
     );
 };
 
 export function createNewGame (user1: string, user2: string) {
+    console.log("create new game");
     const idGame = generateId('game');
     db.games.set(idGame, [user1, user2]);
 
@@ -59,11 +62,12 @@ export function createNewGame (user1: string, user2: string) {
         ws.send(JSON.stringify(
             {
                 type: "create_game",
-                data:
+                data: JSON.stringify(
                     {
                         idGame,  
                         idPlayer: userId,
-                    },
+                    }
+                ),
                 id: 0,
             }
         ))

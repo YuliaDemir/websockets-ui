@@ -7,7 +7,7 @@ export function handleReg(ws, data, id) {
         db.connections.set(ws, name);
         ws.send(JSON.stringify({
             type: 'reg',
-            data: { name, index: name, error: false, errorText: '' },
+            data: JSON.stringify({ name, index: name, error: false, errorText: '' }),
             id,
         }));
         updateWinners(ws);
@@ -18,7 +18,7 @@ export function handleReg(ws, data, id) {
             db.connections.set(ws, name);
             ws.send(JSON.stringify({
                 type: 'reg',
-                data: { name, index: name, error: false, errorText: '' },
+                data: JSON.stringify({ name, index: name, error: false, errorText: '' }),
                 id,
             }));
             updateWinners(ws);

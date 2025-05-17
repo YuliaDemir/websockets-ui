@@ -2,7 +2,7 @@ import { WebSocketServer, WebSocket } from "ws";
 import { Server as HTTPServer} from "http";
 
 import { handleReg } from "./handlers/reg.js";
-import { handleCreateRoom, addToTheRoom, getRooms } from "./handlers/room.js";
+import { createRoom, addToTheRoom, getRooms } from "./handlers/room.js";
 import { addShips } from "./handlers/ships.js";
 
 export function startWebSocketServer(server: HTTPServer) {
@@ -10,9 +10,12 @@ export function startWebSocketServer(server: HTTPServer) {
 
     wss.on('connection', (ws) => {
         ws.on('message', (message) => {
+            console.log(typeof message);
+            console.log(message);
             try {
                 const { type, data, id } = JSON.parse(message.toString("utf8"));
-                handleMessage(ws, type, data, id);
+                const handledData = data ? JSON.parse(data) : data;
+                handleMessage(ws, type, handledData , id);
             }
             catch (err) {
                 console.error('Invalid message:', message);
@@ -27,13 +30,14 @@ export function startWebSocketServer(server: HTTPServer) {
 };
 
 function handleMessage(ws: WebSocket, type: string, data: any, id: number) {
+    console.log("---------- handler -----------------");
     switch (type) {
         case 'reg': {
             handleReg(ws, data, id);
             return getRooms(ws);
         };
         case 'create_room': {
-            return handleCreateRoom(ws);
+            return createRoom(ws);
         };
         case 'add_user_to_room': {
             const { indexRoom: roomId } = data;

@@ -6,5 +6,5 @@ const HTTP_PORT = 3000;
 httpServer.listen(HTTP_PORT, () => {
     startWebSocketServer(httpServer);
     console.log(`Start static http server on the ${HTTP_PORT} port!`);
-    console.log(`http://localhost:8181/`);
+    console.log(`http://localhost:${HTTP_PORT}/`);
 });

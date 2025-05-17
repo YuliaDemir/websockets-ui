@@ -25,8 +25,9 @@ type Ships = {
     //true - вертикаль
     //х у с нуля
 export function addShips (ws: WebSocket, data: any, id: number) {
+    console.log("addShips");
     const userName = db.connections.get(ws) || "";
-    const { data: { ships, gameId }} = data;
+    const { gameId, ships } = data;
 
     let shipsPositions: (1|0)[][] = Array.from({length: 10}, () => Array(10).fill(0));
 
@@ -42,7 +43,7 @@ export function addShips (ws: WebSocket, data: any, id: number) {
             };
         };
     });
-    
+
     const users = db.games.get(gameId) || [];
     const secondUser = users[0] === userName ? users [1] : users[0];
     db.myBoard.set(userName, shipsPositions);
@@ -52,5 +53,5 @@ export function addShips (ws: WebSocket, data: any, id: number) {
 };
 
 export function startGame () {
-    
+    console.log("stsart the game");
 }

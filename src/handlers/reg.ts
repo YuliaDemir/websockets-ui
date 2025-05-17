@@ -9,7 +9,7 @@ export function handleReg(ws: WebSocket, data: any, id: number) {
         db.connections.set(ws, name);
         ws.send(JSON.stringify({
             type: 'reg',
-            data: { name, index: name, error: false, errorText: ''},
+            data: JSON.stringify({ name, index: name, error: false, errorText: ''}),
             id,
         }));
         updateWinners(ws);
@@ -20,7 +20,7 @@ export function handleReg(ws: WebSocket, data: any, id: number) {
             db.connections.set(ws, name);
             ws.send(JSON.stringify({
                 type: 'reg',
-                data: { name, index: name, error: false, errorText: ''},
+                data: JSON.stringify({ name, index: name, error: false, errorText: ''}),
                 id,
             }));
         updateWinners(ws);
