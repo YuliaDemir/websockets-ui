@@ -5,4 +5,5 @@ export const db = {
     connections: new Map(), //connection, userName
     myBoard: new Map(), //userName   
     myShoots: new Map(),
+    winners: new Map(), //userName, countWins
 };

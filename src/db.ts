@@ -7,5 +7,5 @@ export const db = {
     connections: new Map<WebSocket, string>(),                                  //connection, userName
     myBoard: new Map<string, (1|0)[][]>(),                                                //userName   
     myShoots: new Map<string, (1|0)[][]>(), 
-    
+    winners: new Map<string, number>(),                                         //userName, countWins
 };

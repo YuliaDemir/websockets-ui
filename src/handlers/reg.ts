@@ -2,6 +2,7 @@ import { db } from '../db.js';
 import { WebSocket } from 'ws';
 
 export function handleReg(ws: WebSocket, data: any, id: number) {
+    console.log('regestration');
     const { name, password } = data;
     const exists = db.players.has(name);
     if (!exists) {
@@ -37,27 +38,22 @@ export function handleReg(ws: WebSocket, data: any, id: number) {
 
 export function updateWinners(ws: WebSocket) {
     console.log('update winners')
-    // const rooms = [...db.rooms.entries()];
-    // const data = rooms.map(([ roomId, userName ]) => {
-    //     return {
-    //         roomId,
-    //         roomUsers: [
-    //             {
-    //                 name: userName,
-    //                 index: userName,
-    //             }
-    //         ],
-    //     }
-    // });
+    const winners = [...db.winners.entries()];
+    const data = winners.map(([ userName, countWins ]) => {
+        return {
+                    name: userName,
+                    wins: countWins,
+        };
+    });
 
-    // const jsonData = JSON.stringify(data);
-    // const connections = [...db.connections.keys()];
+    const jsonData = JSON.stringify(data);
+    const connections = [...db.connections.keys()];
 
-    // connections.forEach(
-    //     ws => ws.send(JSON.stringify({
-    //         type: "update_room",
-    //         data,
-    //         id: 0,
-    //     }))
-    // );
-}
+    connections.forEach(
+        ws => ws.send(JSON.stringify({
+            type: "update_winners",
+            data: jsonData,
+            id: 0,
+        }))
+    );
+};
