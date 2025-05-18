@@ -5,6 +5,7 @@ import { handleReg } from "./handlers/reg.js";
 import { createRoom, addToTheRoom, getRooms } from "./handlers/room.js";
 import { addShips } from "./handlers/ships.js";
 import { attack, userTurn } from "./handlers/game.js";
+import { single_play } from "./handlers/room.js"
 import { db } from "./db.js";
 
 export function startWebSocketServer(server: HTTPServer) {
@@ -51,8 +52,13 @@ function handleMessage(ws: WebSocket, type: string, data: any, id: number) {
                 return attack(ws, data);
             }
         };
-        default: {
-
-        }
+        case 'randomAttack': {
+            if (userTurn === db.connections.get(ws)) {
+                return attack(ws, data);
+            }
+        };
+        case 'single_play': {
+            return single_play(ws);
+        };
     };
-}
+};

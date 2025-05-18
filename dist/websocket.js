@@ -57,8 +57,14 @@ function handleMessage(ws, type, data, id) {
                 }
             }
             ;
-        default: {
-        }
+        case 'randomAttack':
+            {
+                if (userTurn === db.connections.get(ws)) {
+                    return attack(ws, data);
+                }
+            }
+            ;
     }
     ;
 }
+;

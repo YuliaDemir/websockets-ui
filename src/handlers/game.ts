@@ -6,7 +6,7 @@ export let userTurn: string;
 
 export function attack (ws: WebSocket, data: any) {
     console.log("attack");
-    const { gameId, x, y, indexPlayer } = data;
+    const { gameId, x = getRandom(), y = getRandom(), indexPlayer } = data;
 
     const users = db.games.get(gameId);
     const myEnemy = users![0] === indexPlayer ? users![1] : users![0];
@@ -15,6 +15,7 @@ export function attack (ws: WebSocket, data: any) {
     const enemyWs = [...db.connections.entries()].filter(([ws, user]) => user === myEnemy)[0][0];
 
     sendShoot(x, y, indexPlayer, status, ws);
+    sendShoot(x, y, indexPlayer, status, enemyWs);
 
     if (status !== "miss") {
         userTurn = indexPlayer;
@@ -48,6 +49,7 @@ export function turn (user: string, ws1: WebSocket, ws2: WebSocket) {
     userTurn = user;
 };
 
+4e3
 //true - вертикаль
     //х у с нуля
     // попал = тогда true
@@ -93,7 +95,7 @@ function killedFrame(ship: {x: number, y: number, length: number, direction: boo
         if (ship.x > 0) {
             for (let i = -1; i <= ship.length; i++) {
                 if (ship.y + i >= 0 && ship.y + i <= 9) {
-                    sendShoot(ship.x - 1, ship.y + i, currentPlayer, "miss", ws);
+                    sendShoot(ship.x - 1, ship.y + i, currentPlayer, "miss", ws );
                 }
             };
         };
@@ -185,3 +187,8 @@ function sendWin(userWin: string, ws: WebSocket, ws2: WebSocket) {
     ws.send(win);
     ws2.send(win);
 };
+
+
+function getRandom():number {
+    return Math.floor(Math.random() * 10);
+}

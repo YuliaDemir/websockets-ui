@@ -3,13 +3,14 @@ import { updateWinners } from './reg.js';
 export let userTurn;
 export function attack(ws, data) {
     console.log("attack");
-    const { gameId, x, y, indexPlayer } = data;
+    const { gameId, x = getRandom(), y = getRandom(), indexPlayer } = data;
     const users = db.games.get(gameId);
     const myEnemy = users[0] === indexPlayer ? users[1] : users[0];
     const enemyBoard = db.myBoard2.get(myEnemy);
     const status = getStatus(enemyBoard, x, y, ws);
     const enemyWs = [...db.connections.entries()].filter(([ws, user]) => user === myEnemy)[0][0];
     sendShoot(x, y, indexPlayer, status, ws);
+    sendShoot(x, y, indexPlayer, status, enemyWs);
     if (status !== "miss") {
         userTurn = indexPlayer;
         if (status === "killed") {
@@ -183,3 +184,6 @@ function sendWin(userWin, ws, ws2) {
     ws2.send(win);
 }
 ;
+function getRandom() {
+    return Math.floor(Math.random() * 10);
+}

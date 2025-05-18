@@ -73,3 +73,24 @@ export function createNewGame (user1: string, user2: string) {
         ))
     });
 };
+
+export function single_play (ws: WebSocket) {
+    console.log("create new game");
+    const idGame = generateId('game');
+    const user = db.connections.get(ws)!;
+    db.games.set(idGame, [user, user]);
+    
+    ws.send(JSON.stringify(
+        {
+            type: "create_game",
+            data: JSON.stringify(
+                {
+                    idGame,  
+                    idPlayer: user,
+                }
+            ),
+            id: 0,
+        }
+    ));
+}
+
