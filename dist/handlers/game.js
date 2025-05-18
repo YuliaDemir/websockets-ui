@@ -1,4 +1,5 @@
 import { db } from '../db.js';
+export let userTurn;
 export function attack(ws, data) {
     console.log("attack");
     const { gameId, x, y, indexPlayer } = data;
@@ -6,7 +7,15 @@ export function attack(ws, data) {
     const myEnemy = users[0] === indexPlayer ? users[1] : users[0];
     const enemyBoard = db.myBoard2.get(myEnemy);
     const status = getStatus(enemyBoard, x, y, ws);
+    const enemyWs = [...db.connections.entries()].filter(([ws, user]) => user === myEnemy)[0][0];
     sendShoot(x, y, indexPlayer, status, ws);
+    if (status !== "miss") {
+        userTurn = indexPlayer;
+    }
+    else {
+        userTurn = myEnemy;
+    }
+    turn(userTurn, ws, enemyWs);
 }
 ;
 //true - вертикаль
@@ -134,3 +143,17 @@ function sendShoot(x, y, currentPlayer, status, ws) {
         id: 0,
     }));
 }
+export function turn(user, ws1, ws2) {
+    const jsonData = JSON.stringify({
+        currentPlayer: user
+    });
+    const dataToSend = {
+        type: "turn",
+        data: jsonData,
+        id: 0,
+    };
+    ws1.send(JSON.stringify(dataToSend));
+    ws2.send(JSON.stringify(dataToSend));
+    userTurn = user;
+}
+;

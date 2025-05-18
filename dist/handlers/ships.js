@@ -1,4 +1,5 @@
 import { db } from '../db.js';
+import { turn } from './game.js';
 var TypeOfShip;
 (function (TypeOfShip) {
     TypeOfShip[TypeOfShip["small"] = 1] = "small";
@@ -33,6 +34,7 @@ export function addShips(ws, data, id) {
     if (db.myBoard2.has(secondUser)) {
         startGame(ws, ships, userName);
         startGame(wsSecondUser, ships, secondUser);
+        turn(userName, ws, wsSecondUser);
     }
     ;
 }

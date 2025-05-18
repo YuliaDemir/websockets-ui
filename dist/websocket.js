@@ -2,7 +2,8 @@ import { WebSocketServer } from "ws";
 import { handleReg } from "./handlers/reg.js";
 import { createRoom, addToTheRoom, getRooms } from "./handlers/room.js";
 import { addShips } from "./handlers/ships.js";
-import { attack } from "./handlers/game.js";
+import { attack, userTurn } from "./handlers/game.js";
+import { db } from "./db.js";
 export function startWebSocketServer(server) {
     const wss = new WebSocketServer({ server });
     wss.on('connection', (ws) => {
@@ -51,7 +52,9 @@ function handleMessage(ws, type, data, id) {
             ;
         case 'attack':
             {
-                return attack(ws, data);
+                if (userTurn === db.connections.get(ws)) {
+                    return attack(ws, data);
+                }
             }
             ;
         default: {

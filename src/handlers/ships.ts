@@ -1,6 +1,7 @@
 import { db } from '../db.js';
 import { WebSocket } from 'ws';
 import { generateId } from '../helpers/id.js';
+import { turn } from './game.js';
 
 enum TypeOfShip {
     "small" = 1,
@@ -49,6 +50,7 @@ export function addShips (ws: WebSocket, data: any, id: number) {
     if (db.myBoard2.has(secondUser!)) {
         startGame(ws, ships, userName);
         startGame(wsSecondUser, ships, secondUser!);
+        turn(userName, ws, wsSecondUser);
     };
 };
 
