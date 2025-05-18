@@ -2,6 +2,7 @@ import { WebSocketServer } from "ws";
 import { handleReg } from "./handlers/reg.js";
 import { createRoom, addToTheRoom, getRooms } from "./handlers/room.js";
 import { addShips } from "./handlers/ships.js";
+import { attack } from "./handlers/game.js";
 export function startWebSocketServer(server) {
     const wss = new WebSocketServer({ server });
     wss.on('connection', (ws) => {
@@ -12,7 +13,7 @@ export function startWebSocketServer(server) {
                 handleMessage(ws, type, handledData, id);
             }
             catch (err) {
-                console.error('Invalid message:', message);
+                console.error('Invalid message:', err);
             }
             ;
         });
@@ -46,6 +47,11 @@ function handleMessage(ws, type, data, id) {
         case 'add_ships':
             {
                 return addShips(ws, data, id);
+            }
+            ;
+        case 'attack':
+            {
+                return attack(ws, data);
             }
             ;
         default: {

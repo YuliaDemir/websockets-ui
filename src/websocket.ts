@@ -4,6 +4,7 @@ import { Server as HTTPServer} from "http";
 import { handleReg } from "./handlers/reg.js";
 import { createRoom, addToTheRoom, getRooms } from "./handlers/room.js";
 import { addShips } from "./handlers/ships.js";
+import { attack } from "./handlers/game.js";
 
 export function startWebSocketServer(server: HTTPServer) {
     const wss = new WebSocketServer({ server }); 
@@ -16,7 +17,7 @@ export function startWebSocketServer(server: HTTPServer) {
                 handleMessage(ws, type, handledData , id);
             }
             catch (err) {
-                console.error('Invalid message:', message);
+                console.error('Invalid message:', err);
             };
         });
 
@@ -43,6 +44,9 @@ function handleMessage(ws: WebSocket, type: string, data: any, id: number) {
         };
         case 'add_ships': {
             return addShips(ws, data, id);
+        };
+        case 'attack': {
+            return attack(ws, data);
         };
         default: {
 

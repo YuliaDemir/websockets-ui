@@ -9,32 +9,28 @@ var TypeOfShip;
 ;
 //true - вертикаль
 //х у с нуля
+// попал = тогда true
 export function addShips(ws, data, id) {
     console.log("addShips");
     const userName = db.connections.get(ws) || "";
     const { gameId, ships } = data;
-    let shipsPositions = Array.from({ length: 10 }, () => Array(10).fill(0));
-    ships.forEach(({ position: { x, y }, direction, length }) => {
-        if (direction) {
-            for (let i = 0; i < length; i++) {
-                shipsPositions[x][y + i] = 1;
-            }
-            ;
-        }
-        else {
-            for (let i = 0; i < length; i++) {
-                shipsPositions[x + i][y] = 1;
-            }
-            ;
-        }
-        ;
+    let shipsPositions;
+    shipsPositions = ships.map((ship) => {
+        const { position, direction, length } = ship;
+        return {
+            x: position.x,
+            y: position.y,
+            length,
+            direction,
+            shoots: Array(length).fill(false),
+        };
     });
     const users = db.games.get(gameId) || [];
     const secondUser = users[0] === userName ? users[1] : users[0];
     const wsSecondUser = [...db.connections.entries()]
         .filter(([ws, userName]) => userName === secondUser)[0][0];
-    db.myBoard.set(userName, shipsPositions);
-    if (db.myBoard.has(secondUser)) {
+    db.myBoard2.set(userName, shipsPositions);
+    if (db.myBoard2.has(secondUser)) {
         startGame(ws, ships, userName);
         startGame(wsSecondUser, ships, secondUser);
     }
@@ -43,12 +39,13 @@ export function addShips(ws, data, id) {
 ;
 export function startGame(ws, ships, currentPlayerIndex) {
     console.log("start game");
+    const jsonData = JSON.stringify({
+        ships,
+        currentPlayerIndex
+    });
     ws.send(JSON.stringify({
         type: "start_game",
-        data: {
-            ships,
-            currentPlayerIndex
-        },
+        data: jsonData,
         id: 0,
     }));
 }

@@ -5,7 +5,7 @@ export const db = {
     rooms: new Map<number, string>(),          //roomID, user
     games: new Map<number, [string, string]>(),                                 //gameId, [userName1, userName2]
     connections: new Map<WebSocket, string>(),                                  //connection, userName
-    myBoard: new Map<string, (1|0)[][]>(),                                                //userName   
-    myShoots: new Map<string, (1|0)[][]>(), 
+    //myBoard: new Map<string, (1|0|-1|null)[][]>(),                              //userName  
+    myBoard2: new Map<string, {x: number, y: number, length: number, direction: boolean, shoots: boolean[]}[]>(), 
     winners: new Map<string, number>(),                                         //userName, countWins
 };
