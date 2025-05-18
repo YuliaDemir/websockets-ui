@@ -9,7 +9,7 @@ enum TypeOfShip {
     "huge"
 };
 
-type Ship = {   
+export type Ship = {   
                     position: {
                         x: number,
                         y: number,
