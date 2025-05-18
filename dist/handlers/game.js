@@ -1,4 +1,5 @@
 import { db } from '../db.js';
+import { updateWinners } from './reg.js';
 export let userTurn;
 export function attack(ws, data) {
     console.log("attack");
@@ -11,11 +12,31 @@ export function attack(ws, data) {
     sendShoot(x, y, indexPlayer, status, ws);
     if (status !== "miss") {
         userTurn = indexPlayer;
+        if (status === "killed") {
+            if (checkFinishGame(ws, enemyWs)) {
+                updateWinners(ws, true);
+            }
+            ;
+        }
     }
     else {
         userTurn = myEnemy;
     }
     turn(userTurn, ws, enemyWs);
+}
+;
+export function turn(user, ws1, ws2) {
+    const jsonData = JSON.stringify({
+        currentPlayer: user
+    });
+    const dataToSend = {
+        type: "turn",
+        data: jsonData,
+        id: 0,
+    };
+    ws1.send(JSON.stringify(dataToSend));
+    ws2.send(JSON.stringify(dataToSend));
+    userTurn = user;
 }
 ;
 //true - вертикаль
@@ -25,11 +46,7 @@ function getStatus(enemyBoard, x, y, ws) {
     for (let ship of enemyBoard) {
         if (ship.direction) {
             if (ship.x === x && ship.y + ship.length > y && ship.y <= y) {
-                console.log("---------------------- вертикальный --------------------------------");
-                console.log(ship.x, ship.y, ship.length);
-                console.log(x, y);
                 ship.shoots[y - ship.y] = true;
-                console.log("вошли 1");
                 const killed = ship.shoots.reduce((acc, cur) => acc && cur, true);
                 if (killed) {
                     console.log("killed");
@@ -45,9 +62,6 @@ function getStatus(enemyBoard, x, y, ws) {
         }
         else {
             if (ship.y === y && ship.x + ship.length > x && ship.x <= x) {
-                console.log("---------------------- горизонтальный --------------------------------");
-                console.log(ship.x, ship.y, ship.length);
-                console.log(x, y);
                 ship.shoots[x - ship.x] = true;
                 const killed = ship.shoots.reduce((acc, cur) => acc && cur, true);
                 if (killed) {
@@ -143,17 +157,29 @@ function sendShoot(x, y, currentPlayer, status, ws) {
         id: 0,
     }));
 }
-export function turn(user, ws1, ws2) {
-    const jsonData = JSON.stringify({
-        currentPlayer: user
-    });
-    const dataToSend = {
-        type: "turn",
-        data: jsonData,
+function checkFinishGame(ws, ws2) {
+    const enemyBoard = db.connections.get(ws2);
+    const allShips = db.myBoard2.get(enemyBoard);
+    const allShipsState = allShips?.map(({ shoots }) => shoots) || [];
+    const result = allShipsState.flat(2)
+        .reduce((acc, cur) => acc && cur, true);
+    if (result) {
+        sendWin(db.connections.get(ws), ws, ws2);
+        return true;
+    }
+    ;
+    return false;
+}
+function sendWin(userWin, ws, ws2) {
+    console.log("send win");
+    const win = JSON.stringify({
+        type: "finish",
+        data: JSON.stringify({
+            winPlayer: userWin
+        }),
         id: 0,
-    };
-    ws1.send(JSON.stringify(dataToSend));
-    ws2.send(JSON.stringify(dataToSend));
-    userTurn = user;
+    });
+    ws.send(win);
+    ws2.send(win);
 }
 ;

@@ -36,9 +36,17 @@ export function handleReg(ws: WebSocket, data: any, id: number) {
     };
 };
 
-export function updateWinners(ws: WebSocket) {
+export function updateWinners(ws: WebSocket, plus = false) {
     console.log('update winners')
+
+    if (plus) {
+        const winner = db.connections.get(ws)!;
+        const count = db.winners.get(winner) || 0;
+        db.winners.set(winner, count + 1);
+    };
+
     const winners = [...db.winners.entries()];
+
     const data = winners.map(([ userName, countWins ]) => {
         return {
                     name: userName,

@@ -36,8 +36,14 @@ export function handleReg(ws, data, id) {
     ;
 }
 ;
-export function updateWinners(ws) {
+export function updateWinners(ws, plus = false) {
     console.log('update winners');
+    if (plus) {
+        const winner = db.connections.get(ws);
+        const count = db.winners.get(winner) || 0;
+        db.winners.set(winner, count + 1);
+    }
+    ;
     const winners = [...db.winners.entries()];
     const data = winners.map(([userName, countWins]) => {
         return {
