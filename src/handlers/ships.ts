@@ -25,7 +25,7 @@ export type Ship = {
     // попал = тогда true
 export function addShips (ws: WebSocket, data: any, id: number) {
     console.log("addShips");
-    const userName = db.connections.get(ws) || "";
+    const userName = db.connections.get(ws)!;
     const { gameId, ships } = data;
     let shipsPositions: {x: number, y: number, length: number, direction: boolean, shoots: boolean[]}[];
 
@@ -40,26 +40,18 @@ export function addShips (ws: WebSocket, data: any, id: number) {
         };
     });
 
-    const users = db.games.get(gameId) || [];
+    const users = db.games.get(gameId)!;
     const secondUser = users[0] === userName ? users [1] : users[0];
 
-    db.myBoard2.set(userName, shipsPositions);
-
-    if (userName === secondUser) {
-        /*db.myBoard2.set(userName + "-bot", getRandomShipsPositions());
-        startGame(ws, ships, userName);
-        turn(userName, ws, wsSecondUser);*/
-    }
-    else {
-        const wsSecondUser = [...db.connections.entries()]
+    const wsSecondUser = [...db.connections.entries()]
             .filter(([ws, userName]) => userName === secondUser)[0][0];
-
+    db.myBoard2.set(userName, shipsPositions);
         if (db.myBoard2.has(secondUser!)) {
             startGame(ws, ships, userName);
             startGame(wsSecondUser, ships, secondUser!);
             turn(userName, ws, wsSecondUser);
         };
-    }
+    
 };
 
 export function startGame (ws: WebSocket, ships: any, currentPlayerIndex: string) {

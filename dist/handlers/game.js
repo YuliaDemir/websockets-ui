@@ -16,6 +16,10 @@ export function attack(ws, data) {
         if (status === "killed") {
             if (checkFinishGame(ws, enemyWs)) {
                 updateWinners(ws, true);
+                db.games.delete(gameId);
+                db.myBoard2.delete(indexPlayer);
+                db.myBoard2.delete(myEnemy);
+                return;
             }
             ;
         }
@@ -40,6 +44,7 @@ export function turn(user, ws1, ws2) {
     userTurn = user;
 }
 ;
+4e3;
 //true - вертикаль
 //х у с нуля
 // попал = тогда true
@@ -171,7 +176,7 @@ function checkFinishGame(ws, ws2) {
     ;
     return false;
 }
-function sendWin(userWin, ws, ws2) {
+export function sendWin(userWin, ws, ws2) {
     console.log("send win");
     const win = JSON.stringify({
         type: "finish",

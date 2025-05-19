@@ -22,6 +22,10 @@ export function attack (ws: WebSocket, data: any) {
         if (status === "killed") {
             if (checkFinishGame(ws, enemyWs)) {
                 updateWinners(ws, true);
+                db.games.delete(gameId);
+                db.myBoard2.delete(indexPlayer);
+                db.myBoard2.delete(myEnemy);
+                return;
             };
 
         }
@@ -174,7 +178,7 @@ function checkFinishGame(ws: WebSocket, ws2: WebSocket) {
     return false;
 }
 
-function sendWin(userWin: string, ws: WebSocket, ws2: WebSocket) {
+export function sendWin(userWin: string, ws: WebSocket, ws2: WebSocket) {
     console.log("send win");
     const win = JSON.stringify({
         type: "finish",

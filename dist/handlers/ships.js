@@ -13,7 +13,7 @@ var TypeOfShip;
 // попал = тогда true
 export function addShips(ws, data, id) {
     console.log("addShips");
-    const userName = db.connections.get(ws) || "";
+    const userName = db.connections.get(ws);
     const { gameId, ships } = data;
     let shipsPositions;
     shipsPositions = ships.map((ship) => {
@@ -26,7 +26,7 @@ export function addShips(ws, data, id) {
             shoots: Array(length).fill(false),
         };
     });
-    const users = db.games.get(gameId) || [];
+    const users = db.games.get(gameId);
     const secondUser = users[0] === userName ? users[1] : users[0];
     const wsSecondUser = [...db.connections.entries()]
         .filter(([ws, userName]) => userName === secondUser)[0][0];
