@@ -188,8 +188,8 @@ export function sendWin(userWin: string, ws: WebSocket, ws2: WebSocket) {
             }),
         id: 0,
     });
-    ws.send(win);
-    ws2.send(win);
+    ws?.send(win);
+    ws2?.send(win);
 };
 
 

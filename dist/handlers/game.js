@@ -185,8 +185,8 @@ export function sendWin(userWin, ws, ws2) {
         }),
         id: 0,
     });
-    ws.send(win);
-    ws2.send(win);
+    ws?.send(win);
+    ws2?.send(win);
 }
 ;
 function getRandom() {
